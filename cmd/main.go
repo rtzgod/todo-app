@@ -7,18 +7,19 @@ import (
 	"github.com/rtzgod/todo-app/internal/handler"
 	"github.com/rtzgod/todo-app/internal/repository"
 	"github.com/rtzgod/todo-app/internal/service"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 )
 
 func main() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	if err := initConfig(); err != nil {
-		log.Fatalf("Error initializing config file, %s", err)
+		logrus.Fatalf("Error initializing config file, %s", err)
 	}
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env, %s", err)
+		logrus.Fatalf("Error loading .env, %s", err)
 	}
 
 	db, err := repository.NewPostgres(repository.Config{
@@ -31,7 +32,7 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatalf("Error initializing DB, %s", err)
+		logrus.Fatalf("Error initializing DB, %s", err)
 	}
 
 	repos := repository.NewRepository(db)
@@ -40,7 +41,7 @@ func main() {
 
 	server := new(todo.Server)
 	if err := server.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		log.Fatalf("error occured while running http server: %s", err)
+		logrus.Fatalf("error occured while running http server: %s", err)
 	}
 }
 
