@@ -15,9 +15,11 @@ type TodoList interface {
 	GetAll(userID int) ([]todo.TodoList, error)
 	GetByID(userId, listId int) (todo.TodoList, error)
 	Delete(userId, listId int) error
+	Update(userId, listId int, input todo.UpdateListInput) error
 }
 
 type TodoItem interface {
+	Create(userId, listId int, item todo.TodoItem) (int, error)
 }
 
 type Repository struct {
